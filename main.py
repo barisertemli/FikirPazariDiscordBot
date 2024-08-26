@@ -11,35 +11,47 @@ bot = commands.Bot(command_prefix="!", intents=discord.Intents.all()) # Bot is k
 discord.Intents.message_content = True # Normally Python doesn't like it? We set it True to let bot see the messages.
 bot.remove_command("help") # We remove the default help command to create our own.
 
-# Step 2: Message Functionality
 
 # Step 3: Startup
+# Global dictionary to store views associated with message IDs
+views = {
+    "activity_join_button_id": int(os.getenv("ACTIVITY_JOIN_BUTTON_ID"))
+}
+
+class ButtonView(discord.ui.View): # This is a class for the view of the button.
+    def __init__(self):
+        super().__init__(timeout=None)  # Keep the view active indefinitely
+
+    @discord.ui.button(label="Send Message", style=discord.ButtonStyle.primary) # This is the button that will be shown.
+    async def button(self, interaction: discord.Interaction, button: discord.ui.Button): # This is the function that will be called when the button is clicked.
+        await interaction.response.send_message(content="Bana tıkladın!", ephemeral=True)  
+
+
 @bot.event
-async def on_ready():
+async def on_ready(): # This function is called when the bot is ready to be used.
     print(f"{bot.user} is alive!")
 
-    channel_id = 1277280892485894297  # etkinlik kayit id
+    channel_id = os.getenv("ACTIVITY_JOIN_TEXTCHANNEL_ID")  # etkinlik kayit id
     channel = bot.get_channel(channel_id)
 
-    await channel.send("Selam!")
 
+# Handle interactions globally
+@bot.event
+async def on_interaction(interaction: discord.Interaction): # This function is called when an interaction is made with the bot.
+    if interaction.type == discord.InteractionType.component:
 
-class Button(discord.ui.View):
-    def __init__(self):
-        super().__init__()
+        message_id = interaction.message.id
 
-    @discord.ui.button(label="Send Message", style=discord.ButtonStyle.primary)
-    async def button(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_message(content="Bana tıkladın!", ephemeral=True)
+        if message_id == views["activity_join_button_id"]:
+            # await view.children[0].callback(interaction)  # Call the callback for the button
+            await interaction.response.send_message("Etkinliğe kaydoldun!", ephemeral=True)
+            print(views)
+            print(message_id)
 
-@bot.command()
-async def menu(ctx):
-    view = Button()
-    await ctx.reply(view=view)
-
-
-
-# Step 4: Handling Incoming Messages
+        else:
+            await interaction.response.send_message("This button is no longer active.", ephemeral=True)
+            print(views)
+            print(message_id)
 
 
 
