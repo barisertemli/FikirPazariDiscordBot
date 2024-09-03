@@ -1,4 +1,5 @@
 import os
+from customClasses import *
 from dotenv import load_dotenv
 import discord
 from discord.ext import commands, tasks
@@ -18,14 +19,6 @@ views = {
     "activity_join_button_id": int(os.getenv("ACTIVITY_JOIN_BUTTON_ID"))
 }
 
-class ButtonView(discord.ui.View): # This is a class for the view of the button.
-    def __init__(self):
-        super().__init__(timeout=None)  # Keep the view active indefinitely
-
-    @discord.ui.button(label="Send Message", style=discord.ButtonStyle.primary) # This is the button that will be shown.
-    async def button(self, interaction: discord.Interaction, button: discord.ui.Button): # This is the function that will be called when the button is clicked.
-        await interaction.response.send_message(content="Bana tıkladın!", ephemeral=True)  
-
 
 @bot.event
 async def on_ready(): # This function is called when the bot is ready to be used.
@@ -44,7 +37,11 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 
         if message_id == views["activity_join_button_id"]:
             # await view.children[0].callback(interaction)  # Call the callback for the button
-            await interaction.response.send_message("Etkinliğe kaydoldun!", ephemeral=True)
+            # await interaction.response.send_message("Etkinliğe kaydoldun!", ephemeral=True)
+
+            modal = MyModal(title="Modal via Slash Command")
+            modalResponse = await interaction.response.send_modal(modal)
+            print(modalResponse)
             print(views)
             print(message_id)
 
@@ -53,6 +50,12 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             print(views)
             print(message_id)
 
+
+
+# @bot.command()
+# async def menu(ctx):
+#     view = ButtonView()
+#     await ctx.reply(view=view)
 
 
 # Step 5: Main Entry Point
