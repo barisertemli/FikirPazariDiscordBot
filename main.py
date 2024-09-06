@@ -1,7 +1,5 @@
-import os
 from customClasses import *
 from dotenv import load_dotenv
-import discord
 from discord.ext import commands, tasks
 
 # Step 0: Load the Token
@@ -40,15 +38,12 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             # await interaction.response.send_message("Etkinliğe kaydoldun!", ephemeral=True)
 
             modal = MyModal(title="Modal via Slash Command")
-            modalResponse = await interaction.response.send_modal(modal)
-            print(modalResponse)
-            print(views)
-            print(message_id)
+            await interaction.response.send_modal(modal)
+            # print(views)
 
         else:
             await interaction.response.send_message("This button is no longer active.", ephemeral=True)
             print(views)
-            print(message_id)
 
 
 
