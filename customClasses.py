@@ -7,21 +7,42 @@ table = api.table(os.environ.get("AIRTABLE_BASE_ID"), "Week1")
 
 #TODO: Create a function to create a new table for each week.
 
-class ButtonView(discord.ui.View): # This is a class for the view of the button.
-    def __init__(self):
-        super().__init__(timeout=None)  # Keep the view active indefinitely
+"""class SingleButton(discord.ui.View):
+    def _init_(self):
+        super()._init_(timeout=None)
 
-    @discord.ui.button(label="Etkinlik Kayıt", style=discord.ButtonStyle.primary) # This is the button that will be shown.
-    async def button(self, interaction: discord.Interaction, button: discord.ui.Button): # This is the function that will be called when the button is clicked.
-        await interaction.response.send_message(content="Bana tıkladın!", ephemeral=True)
+    @discord.ui.button(label="Etkinliğe Kaydol",style=discord.ButtonStyle.blurple, custom_id="activity_join_button")
+    async def activityJoin(self,interaction:discord.Interaction,button:discord.ui.Button):
+        await interaction.response.send_message("Etkinliğe kaydoldun!", ephemeral=True)
+        print(f"Button {button.custom_id} has been clicked by {interaction.user.name}")"""
+
+class ControlPanel(discord.ui.View):
+    def _init_(self):
+        super()._init_(timeout=None)
+
+    @discord.ui.button(label="Odaları Aç",style=discord.ButtonStyle.green, custom_id="open_rooms")
+    async def openRooms(self,interaction:discord.Interaction,button:discord.ui.Button):
+        await interaction.response.send_message("Odaları açtım!")
+        print(f"Button {button.custom_id} has been clicked by {interaction.user.name}")
+
+    @discord.ui.button(label="Odaları Kapat",style=discord.ButtonStyle.red, custom_id="close_rooms")
+    async def closeRooms(self,interaction:discord.Interaction,button:discord.ui.Button):
+        await interaction.response.send_message("Odaları kapattım!")
+        print(f"Button {button.custom_id} has been clicked by {interaction.user.name}")
+
+    @discord.ui.button(label="Son Dakika Duyurusu",style=discord.ButtonStyle.blurple, custom_id="last_minute_announcement")
+    async def announcement(self,interaction:discord.Interaction,button:discord.ui.Button):
+        await interaction.response.send_message("Duyuru geçmeye başlıyorum!")
+        print(f"Button {button.custom_id} has been clicked by {interaction.user.name}")
         
 
-class MyModal(discord.ui.Modal):
-    def __init__(self, *args, **kwargs) -> None:
+class ActivityModal(discord.ui.Modal):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # self.add_item(discord.ui.TextInput(label="Short Input"))
-        answer = self.add_item(discord.ui.TextInput(label="Bugün ne konuşacaksın?",
+        self.add_item(discord.ui.TextInput(custom_id="topic",
+                                           label="Bugün ne konuşacaksın?",
                                            style=discord.TextStyle.long,
                                            placeholder="Buraya verdiğin bilgiler sosyal medya içeriklerimizde kullanılma amacıyla kaydedilecektir."))
         
