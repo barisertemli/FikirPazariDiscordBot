@@ -36,20 +36,24 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 
     if interaction.type == discord.InteractionType.component: # If the interaction is a component interaction
 
+        #TODO: Change this interaction to check also for the bot-panel interactions.
+        # Switch case kullanmak daha mantıklı olabilir.
 
         message_id = str(interaction.data["custom_id"])
 
-        if message_id == views["activity_join_button_id"]:
-            # await view.children[0].callback(interaction)  # Call the callback for the button
-            # await interaction.response.send_message("Etkinliğe kaydoldun!", ephemeral=True)
-
+        if message_id == "open_rooms":
+            print("Open Rooms Button Clicked")
+        elif message_id == "close_rooms":
+            print("Close Rooms Button Clicked")
+        elif message_id == "last_minute_announcement":
+            print("Last Minute Announcement Button Clicked")
+        elif message_id == "activity_join_button":
+            print("Activity Join Button Clicked")
             modal = ActivityModal(title="Modal via Button")
             await interaction.response.send_modal(modal)
-            # print(views)
-
         else:
             # await interaction.response.send_message("This button is no longer active.", ephemeral=True)
-            print(views)
+            print(f"Ben bu butonu tanımıyorum abi, tanıdıklarım bunlar: \n {views}")
 
 #TODO: @commands.is_owner() use this to restrict the command to the owner of the bot.
 
