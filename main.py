@@ -2,6 +2,9 @@ from customClasses import *
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
 
+api = Api(os.environ.get("AIRTABLE_TOKEN"))
+table = api.table(os.environ.get("AIRTABLE_BASE_ID"), "Week1")
+
 # Step 0: Load the Token
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -36,13 +39,41 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 
     if interaction.type == discord.InteractionType.component: # If the interaction is a component interaction
 
-        #TODO: Change this interaction to check also for the bot-panel interactions.
-        # Switch case kullanmak daha mantıklı olabilir.
-
         message_id = str(interaction.data["custom_id"])
 
         if message_id == "open_rooms":
             print("Open Rooms Button Clicked")
+
+            # Get the guild object
+            guild = bot.get_guild(interaction.guild_id)
+
+            category_name = "Fikir Pazarı"
+            category = await guild.create_category(category_name)
+
+            
+            group = []
+            index = 1
+            for record in table.all():
+                if len(group) == 5:
+                    print(group)
+                    channel_name = f"Fikir Pazarı Odası {index}"
+                    await guild.create_voice_channel(channel_name, category=category)
+
+                    #TODO: Add the group members to the channel
+                    group = []
+                    group.append(str(record["fields"]["Discord Username"]))
+                    index += 1
+                else:
+                    group.append(str(record["fields"]["Discord Username"]))
+
+            print(group)
+            channel_name = f"Fikir Pazarı Odası {index}"
+            await guild.create_voice_channel(channel_name, category=category)
+
+            #TODO: Add the group members to the channel
+            #HOW? Only these group members should be able to join the channel. We want them to see the other channels but not join them.
+
+
         elif message_id == "close_rooms":
             print("Close Rooms Button Clicked")
         elif message_id == "last_minute_announcement":
