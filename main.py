@@ -53,13 +53,25 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             
             group = []
             index = 1
+            global roles
+            roles = []
             for record in table.all():
                 if len(group) == 5:
                     print(group)
                     channel_name = f"Fikir Pazarı Odası {index}"
                     await guild.create_voice_channel(channel_name, category=category)
+                    role = await guild.create_role(name=channel_name)
+                    roles.append(role)
 
-                    #TODO: Add the group members to the channel
+                    for username in group:
+                        try:
+                            member = guild.get_member_named(username)
+                            await member.add_roles(role)
+                        except AttributeError:
+                            print(f"{username} is not a member of the guild")
+                             
+
+                    #TODO: Adjust voice channel permissions to only allow the role to connect
                     group = []
                     group.append(str(record["fields"]["Discord Username"]))
                     index += 1
@@ -69,13 +81,36 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             print(group)
             channel_name = f"Fikir Pazarı Odası {index}"
             await guild.create_voice_channel(channel_name, category=category)
+            role = await guild.create_role(name=channel_name)
+            roles.append(role)
+            for username in group:
+                        try:
+                            member = guild.get_member_named(username)
+                            await member.add_roles(role)
+                        except AttributeError:
+                            print(f"{username} is not a member of the guild")
+                             
 
-            #TODO: Add the group members to the channel
-            #HOW? Only these group members should be able to join the channel. We want them to see the other channels but not join them.
 
+            #TODO: Adjust voice channel permissions to only allow the role to connect
 
         elif message_id == "close_rooms":
             print("Close Rooms Button Clicked")
+
+            # Get the guild object
+            guild = bot.get_guild(interaction.guild_id)
+
+            for channel in guild.voice_channels:
+                if channel.category.name == "Fikir Pazarı":
+                    await channel.delete()
+
+            for role in roles:
+                await role.delete()
+            
+            for category in guild.categories:
+                if category.name == "Fikir Pazarı":
+                    await category.delete()
+
         elif message_id == "last_minute_announcement":
             print("Last Minute Announcement Button Clicked")
         elif message_id == "activity_join_button":
