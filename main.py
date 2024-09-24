@@ -56,20 +56,12 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             global roles
             roles = []
             for record in table.all():
-                if len(group) == 5:
-                    print(group)
-                    channel_name = f"Fikir Pazarı Odası {index}"
-                    await guild.create_voice_channel(channel_name, category=category)
-                    role = await guild.create_role(name=channel_name)
-                    roles.append(role)
 
-                    for username in group:
-                        try:
-                            member = guild.get_member_named(username)
-                            await member.add_roles(role)
-                        except AttributeError:
-                            print(f"{username} is not a member of the guild")
-                             
+                #TODO: Do we need to randomize the groups? Or is it already randomized in the airtable?
+
+                if len(group) == 5:
+                    
+                    await group_members(guild, group, category, index)                             
 
                     #TODO: Adjust voice channel permissions to only allow the role to connect
                     group = []
@@ -78,17 +70,7 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
                 else:
                     group.append(str(record["fields"]["Discord Username"]))
 
-            print(group)
-            channel_name = f"Fikir Pazarı Odası {index}"
-            await guild.create_voice_channel(channel_name, category=category)
-            role = await guild.create_role(name=channel_name)
-            roles.append(role)
-            for username in group:
-                        try:
-                            member = guild.get_member_named(username)
-                            await member.add_roles(role)
-                        except AttributeError:
-                            print(f"{username} is not a member of the guild")
+            await group_members(guild, group, category, index) # Last group
                              
 
 
@@ -127,6 +109,26 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 # Step 5: Main Entry Point
 def main():
     bot.run(token=TOKEN)
+
+async def group_members(guild, group, category, index):
+    print(group)
+    channel_name = f"Fikir Pazarı Odası {index}"
+    channel = await guild.create_voice_channel(channel_name, category=category)
+
+    role = await guild.create_role(name=channel_name)
+    roles.append(role)
+
+    await channel.set_permissions(guild.default_role, connect=False)
+    await channel.set_permissions(role, connect=True)
+
+    for username in group:
+        try:
+            member = guild.get_member_named(username)
+            await member.add_roles(role)
+        except AttributeError:
+            print(f"{username} is not a member of the guild")
+
+    
 
 if __name__ == "__main__":
     main()
