@@ -1,6 +1,7 @@
 from customClasses import *
 from dotenv import load_dotenv
 from discord.ext import commands, tasks
+import random
 
 api = Api(os.environ.get("AIRTABLE_TOKEN"))
 table = api.table(os.environ.get("AIRTABLE_BASE_ID"), "Week1")
@@ -41,7 +42,7 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 
         message_id = str(interaction.data["custom_id"])
 
-        if message_id == "open_rooms":
+        if message_id == "open_rooms": # If the interaction is a button click with the custom_id "open_rooms"
             print("Open Rooms Button Clicked")
 
             # Get the guild object
@@ -55,7 +56,11 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             index = 1
             global roles
             roles = []
-            for record in table.all():
+
+            tableDict = table.all()
+            random.shuffle(tableDict)
+            
+            for record in tableDict:
 
                 #TODO: Do we need to randomize the groups? Or is it already randomized in the airtable?
 
@@ -76,7 +81,7 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 
             #TODO: Adjust voice channel permissions to only allow the role to connect
 
-        elif message_id == "close_rooms":
+        elif message_id == "close_rooms": # If the interaction is a button click with the custom_id "close_rooms"
             print("Close Rooms Button Clicked")
 
             # Get the guild object
@@ -92,6 +97,8 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             for category in guild.categories:
                 if category.name == "Fikir Pazarı":
                     await category.delete()
+            
+            #TODO: Can we send a dm to the participants to get a feedback? Another modal?
 
         elif message_id == "last_minute_announcement":
             print("Last Minute Announcement Button Clicked")
