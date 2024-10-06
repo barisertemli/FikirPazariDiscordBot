@@ -33,6 +33,12 @@ async def on_ready(): # This function is called when the bot is ready to be used
 
     # await channel.send("Bir sonraki etkinliğe kaydolmak için aşağıdaki butona tıklayın!", view=SingleButton())
 
+@bot.event
+async def on_voice_state_update(member, before, after):
+    if after.channel is None:
+        print(f"{member} left {before.channel}")
+    elif after.channel.id == int(os.getenv("HELP_ID")): #TODO: Yardım kanalı buraya gelecek
+        print(f"{member} joined {after.channel}")
 
 # Handle interactions globally
 @bot.event
@@ -40,9 +46,9 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 
     if interaction.type == discord.InteractionType.component: # If the interaction is a component interaction
 
-        message_id = str(interaction.data["custom_id"])
+        interaction_id = str(interaction.data["custom_id"])
 
-        if message_id == "open_rooms": # If the interaction is a button click with the custom_id "open_rooms"
+        if interaction_id == "open_rooms": # If the interaction is a button click with the custom_id "open_rooms"
             print("Open Rooms Button Clicked")
 
             # Get the guild object
@@ -81,7 +87,7 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 
             #TODO: Adjust voice channel permissions to only allow the role to connect
 
-        elif message_id == "close_rooms": # If the interaction is a button click with the custom_id "close_rooms"
+        elif interaction_id == "close_rooms": # If the interaction is a button click with the custom_id "close_rooms"
             print("Close Rooms Button Clicked")
 
             # Get the guild object
@@ -100,9 +106,9 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             
             #TODO: Can we send a dm to the participants to get a feedback? Another modal?
 
-        elif message_id == "last_minute_announcement":
+        elif interaction_id == "last_minute_announcement":
             print("Last Minute Announcement Button Clicked")
-        elif message_id == "activity_join_button":
+        elif interaction_id == "activity_join_button":
             print("Activity Join Button Clicked")
             modal = ActivityModal(title="Modal via Button")
             await interaction.response.send_modal(modal)
@@ -116,6 +122,8 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
 # Step 5: Main Entry Point
 def main():
     bot.run(token=TOKEN)
+
+    
 
 async def group_members(guild, group, category, index):
     print(group)
