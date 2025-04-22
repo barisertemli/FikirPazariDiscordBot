@@ -110,7 +110,7 @@ async def on_interaction(interaction: discord.Interaction): # This function is c
             print("Last Minute Announcement Button Clicked")
         elif interaction_id == "activity_join_button":
             print("Activity Join Button Clicked")
-            modal = ActivityModal(title="Modal via Button")
+            modal = ActivityModal(title="Etkinlik Kayıt Formu")
             await interaction.response.send_modal(modal)
         else:
             # await interaction.response.send_message("This button is no longer active.", ephemeral=True)

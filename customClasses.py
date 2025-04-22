@@ -20,12 +20,14 @@ class ControlPanel(discord.ui.View):
     def _init_(self):
         super()._init_(timeout=None)
 
-    @discord.ui.button(label="Odaları Aç",style=discord.ButtonStyle.green, custom_id="open_rooms")
-    async def openRooms(self,interaction:discord.Interaction,button:discord.ui.Button):
+    @discord.ui.button(label="Odaları Aç",
+                       style=discord.ButtonStyle.green,
+                       custom_id="open_rooms")
+    async def openRooms(self, interaction:discord.Interaction, button:discord.ui.Button):
         await interaction.response.send_message("Odaları açtım!")
         print(f"Button {button.custom_id} has been clicked by {interaction.user.name}")
 
-    @discord.ui.button(label="Odaları Kapat",style=discord.ButtonStyle.red, custom_id="close_rooms")
+    @discord.ui.button(label="Odaları Kapat", style=discord.ButtonStyle.red, custom_id="close_rooms")
     async def closeRooms(self,interaction:discord.Interaction,button:discord.ui.Button):
         await interaction.response.send_message("Odaları kapattım!")
         print(f"Button {button.custom_id} has been clicked by {interaction.user.name}")
